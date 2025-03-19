@@ -13,3 +13,10 @@ Dalam fungsi `handle_connection`, server HTTP menerima setiap koneksi yang masuk
 
 Screenshot:
 ![Commit 2 screen capture](/assets/images/commit2.png)
+
+### Commit 3 Reflection
+
+Sebelumnya, web server selalu menampilkan halaman `hello.html`. Setelah dimodifikasi, fungsi `handle_connection` kini mengirimkan raw HTTP Response berdasarkan status HTTP Request yang diterima. Proses ini menggunakan `BufReader` untuk membaca raw HTTP Request, dengan mengambil baris pertama menggunakan `.lines().next().unwrap().unwrap()` untuk mendapatkan request line, lalu diperiksa apakah sesuai dengan GET / HTTP/1.1. Jika ya, server mengembalikan halaman `hello.html`. Jika tidak, server menampilkan `404.html`. Dengan pendekatan ini, fungsi `handle_connection` sekarang menyerupai _routing_, di mana server akan mengembalikan halaman HTML berdasarkan permintaan yang diterima. Selain itu, awalnya terdapat duplikasi kode pada bagian conditional untuk menentukan apakah permintaan akan mengembalikan halaman `hello.html` atau tidak. Oleh karena itu, saya menerapkan _refactoring_ dengan mengekstrak `status_line` dan nama file HTML ke dalam variabel yang nilainya ditentukan berdasarkan request yang diterima.
+
+Screenshot:
+![Commit 3 screen capture](/assets/images/commit3.png)
