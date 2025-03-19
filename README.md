@@ -20,3 +20,7 @@ Sebelumnya, web server selalu menampilkan halaman `hello.html`. Setelah dimodifi
 
 Screenshot:
 ![Commit 3 screen capture](/assets/images/commit3.png)
+
+### Commit 4 Reflection
+
+Dengan kode `handle_connection` yang dimodifikasi untuk menangkap juga GET Request ke URI /sleep, ketika seseorang me-_request_ URI tersebut dan ada orang lain yang ingin mengakses URI /, pengguna kedua harus menunggu hingga pengguna pertama mendapatkan respons dari server. Hal ini terjadi karena fungsi `handle_connection` berjalan secara _single-threaded_, sehingga setiap request baru harus menunggu eksekusi sebelumnya selesai. Jika ada bagian kode dalam `handle_connection` yang membutuhkan waktu lama, seperti saat menangani request ke `/sleep` yang menyebabkan server sleep selama 10 detik sebelum mengembalikan `hello.html`, maka semua _request_ lain akan tertahan. Jika banyak orang yang mengakses `/sleep`, ini tentu akan memperlambat respons bagi pengguna lain yang mengakses URI berbeda. Untuk mensimulasikan respons lambat ini, digunakan fungsi `thread::sleep` untuk menunda eksekusi program selama 10 detik sebelum memberikan respons, serta match untuk memeriksa baris request dari klien. Jika request-nya adalah `"GET /sleep HTTP/1.1"`, server akan menunggu selama 10 detik sebelum merespons.
