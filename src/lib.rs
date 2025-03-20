@@ -26,6 +26,40 @@ impl ThreadPool {
 
         ThreadPool { workers, sender }
     }
+
+    pub fn build(size: usize) -> Result<ThreadPool, PoolCreationError> {
+
+        if size < 1 {
+
+            Err(PoolCreationError)
+
+        } else {
+
+            let (sender, receiver) = mpsc::channel();
+
+
+
+            let receiver: Arc<Mutex<mpsc::Receiver<Job>>> = Arc::new(Mutex::new(receiver));
+
+
+
+            let mut workers: Vec<Worker> = Vec::with_capacity(size);
+
+
+
+            for id in 0..size {
+
+                workers.push(Worker::new(id, Arc::clone(&receiver)));
+
+            }
+
+
+
+            Ok(ThreadPool { workers, sender })
+
+        }
+
+    }
     
     pub fn execute<F>(&self, f: F)
     where
@@ -53,5 +87,14 @@ impl Worker {
         });
 
         Worker { id, thread }
+    }
+}
+
+#[derive(Debug)]
+pub struct PoolCreationError;
+
+impl fmt::Display for PoolCreationError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "Unable to create ThreadPool with 0 threads")
     }
 }

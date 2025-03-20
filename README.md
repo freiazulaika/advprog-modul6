@@ -28,3 +28,7 @@ Dengan kode `handle_connection` yang dimodifikasi untuk menangkap juga GET Reque
 ### Commit 5 Reflection
 
 Function `handle_connection` kini berjalan secara _multi-threaded_ dengan bantuan `ThreadPool` yang mengelola sejumlah Worker dan Sender untuk mengeksekusi _request_ secara paralel. Sender mengirimkan Job ke Worker melalui Receiver, yang disimpan dalam Arc dan Mutex, sehingga banyak Worker dapat mengaksesnya tetapi hanya satu yang dapat mengeksekusi dalam satu waktu. Dengan sistem ini, _request_ yang memakan waktu lama tidak akan menghambat _request_ lain, karena server dapat memproses beberapa permintaan sekaligus menggunakan thread yang tersedia.
+
+### Commit Bonus Reflection
+
+Perbedaan utama antara function `build` dan `new` terletak pada cara menangani error. Function `build` mengembalikan nilai bertipe `Result<ThreadPool, PoolCreationError>` yang dapat menghasilkan objek ThreadPool jika berhasil atau memberikan error `PoolCreationError` jika ada kesalahan. Dengan pendekatan ini, program tetap dapat menangani error tanpa harus langsung berhenti. Sedangkan, function `new` langsung mengembalikan objek ThreadPool tanpa mekanisme _error handling_. Jika terjadi kesalahan, function ini akan memicu panic, menyebabkan program terhenti dan harus dijalankan ulang setelah error diperbaiki.
